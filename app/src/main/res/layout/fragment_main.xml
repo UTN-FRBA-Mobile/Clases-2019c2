@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".MainFragment"
+             android:orientation="vertical">
+
+    <ImageView
+            android:src="@drawable/android_student"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+            android:id="@+id/imageView3"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"/>
+
+    <TextView
+            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/titulo"
+            android:text="Trivia ANDROID"
+            android:layout_gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2" android:textSize="45sp"
+            android:textStyle="bold" android:fontFamily="sans-serif-smallcaps" android:typeface="monospace"
+            android:textColor="@android:color/background_dark"/>
+    <Button
+            android:layout_marginTop="30dp"
+            android:layout_width="207dp"
+            android:layout_height="80dp"
+            android:id="@+id/botonPlay"
+            android:layout_gravity="center_horizontal"
+            android:text="INICIAR"
+            style="@style/Widget.AppCompat.Button"
+            android:fontFamily="sans-serif-smallcaps" android:textSize="24sp"/>
+    <Button
+            android:layout_marginTop="20dp"
+            android:text="Acerca de..."
+            android:layout_width="207dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/buttonAbout"/>
+
+</LinearLayout>
