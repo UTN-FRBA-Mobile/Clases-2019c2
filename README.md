@@ -1,60 +1,82 @@
 # Clases-2019c2
 Prácticas de la materia
 
-## Práctica de layouts
+## Práctica Conectividad
 
-Este proyecto contiene una pequeña aplicación que muestra una pantalla similar a la de una nueva
-publicación en Facebook. El layout está incompleto y hay que completarlo para que luzca así:
+Conectar la aplicación con un servicio REST simple.
 
-<img alt="qué estás pensando" src="sample.jpg" width="250" />
+* Agregar al `build.gradle` de la aplicación las dependencias necesarias para usar RetroFit y Picasso:
+```
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+```
+(ya fueron agregadas para que levanten más rápido el entorno)
 
-El layout que vamos a modificar es fragment_status_update.xml. No es necesario cambiar la
-estructura del mismo, sino agregar los atributos que hagan falta a los elementos existentes. Si
-bien hay más tipos de Layouts distintos, en este ejemplo vamos a ver FrameLayout, LinearLayout
-y RelativeLayout.
+* Agregar en `AndroidManifest.xml` el permiso necesario para acceder a Internet (en `<manifest>`, fuera de `<application>`):
+```
+    <uses-permission android:name="android.permission.INTERNET" />
+```
 
-Los atributos de un elemento que comienzan con `layout_` indican al contenedor cómo debe desplegar
-ese elemento. Hay dos obligatorios: `layout_width` y `layout_height` que indican el tamaño que
-ocupa esa subvista. Los valores que acepta son dimensiones o alguno de los valores especiales
-`wrap_content` (que ajusta al contenido) o `match_parent` (que toma el tamaño del contenedor).
-El resto de los atributos `layout_` dependen del tipo de contenedor.
+* Diseñar el modelo para leer el resultado del servicio con este formato:
 
-Los atributos que explicamos a continuación se utilizan en la subvista si comienzan con `layout_`
-o en el contenedor en caso contrario. De más está decir que no son todos los atributos que van a
-encontrar, pero sí los más comunes.
+```json
+{
+  "tweets": [
+      {
+          "profilePic": "url de imagen",
+          "name": "nombre",
+          "certified": true,
+          "username": "@username",
+          "content": "el tweet",
+          "image": "url de imagen. opcional (puede no venir)",
+          "commentCount": número,
+          "retweetCount": número,
+          "likeCount": número
+      }
+  ]
+}
+```
 
-### FrameLayout
+Pueden usar `data class` de Kotlin.
 
-Las subvistas se apilan una encima de la otra.
+* Armar la interfaz para hacer la llamada con RetroFit a la siguiente URL:
 
-Se puede especificar la alineación de las subvistas
-usando el atributo `gravity` (para todas las subvistas) o `layout_gravity` (para una subvista).
+    `https://demo0682762.mockable.io/list`
 
-### LinearLayout
+Hay una breve explicación de RetroFit en su página: https://square.github.io/retrofit/
+(con leer la introducción alcanza)
 
-Las subvistas se despliegan una a continuación de la otra.
+* Crear una instancia de RetroFit que implemente la interfaz diseñada con:
 
-El atributo principal es `orientation` (horizontal o vertical). Además de la alineación con
-`gravity` y `layout_gravity` (solo en el eje normal al que distribuye) también se puede distribuir
-el espacio libre entre subvistas con `layout_weight` y `weightSum`. El espacio que no ocupan las
-subvistas sin `layout_weight` se distribuye entre las que sí lo tienen proporcionalmente según su
-peso. Si `weightSum` se omite calcula la suma automáticamente.
+```kotlin
+val service = Retrofit.Builder()
+    .addConverterFactory(GsonConverterFactory.create()) // Para parsear automágicamente el json
+    .baseUrl("https://demo0682762.mockable.io/")
+    .build()
+    .create(TweetsService::class.java) // la interfaz que diseñaron antes
+```
 
-Se recomienda no usar `match_parent` en las subvistas en el mismo eje donde se distribuyen las
-subvistas.
+* Realizar la llamada al servicio en el `onStart` de `MainFragment`, suscribirse a la respuesta y pasar los tweets a `TweetsAdapter`.
 
-### RelativeLayout
+La clase `Call` permite hacer llamadas síncronas y asíncronas. Como en `onStart` estamos en el main thread, queremos que la llamada sea asíncrona para no bloquearlo, por lo tanto la llamada se ejecuta con `enqueue`, no `execute`:
 
-Las subvistas se despliegan en relación al contenedor u otras subvistas. Para cada subvista hay que
-indicar al menos una relación para cada eje.
+```kotlin
+.enqueue(object: Callback<Respuesta> {
+    override fun onResponse(call: Call<Respuesta>, response: Response<Respuesta>) {
+        // pasar los tweets al tweetAdapter
+    }
+    override fun onFailure(call: Call<Respuesta>, error: Throwable) {
+        Toast.makeText(activity, "No tweets founds!", Toast.LENGTH_SHORT).show()
+    }
+})
+```
+Acá `Respuesta` sería el nombre de la data class que crearon antes.
 
-`layout_alignParentStart` (a la izquierda LTR), `layout_alignParentEnd` (a la derecha LTR),
-`layout_alignParentTop` (hacia arriba) y `layout_alignParentBottom` (hacia abajo),
-`layout_centerHorizontal` (centro horizontal), `layout_centerVertical` (centro vertical) llevan
-`true` cuando queremos que la subvista se pegue a alguno de los bordes o centro del contenedor.
+* Actualizar TweetsAdapter para contener una lista de tweets y mostrar la información de cada tweet.
 
-Otros atributos `layout_` reciben una referencia a otra subvista. Esto requiere que la subvista a
-referenciar tenga un id. Para alinear a otra subvista se usan los atributos `layout_alignStart`,
-`layout_alignEnd`, `layout_alignTop`, `layout_alignBottom` o `layout_alignBaseline` (alinea las
-bases del contenido). Para poner una subvista al lado de otra se utilizan `layout_toEndOf`,
-`layout_toStartOf`, `layout_above` o `layout_below`.
+* Mostrar las imágenes (`profilePic` e `image`) desde TweetsAdapter utilizando Picasso:
+```
+Picasso.get().load(Uri.parse(/* la url a bajar */).into(/* el imageView donde va la imagen */)
+```

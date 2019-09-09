@@ -1,17 +1,14 @@
 package ar.edu.utn.frba.mobile.clases_2019c2
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_main.*
-
-
-private const val ARG_TITLE = "title"
 
 /**
  * A simple [Fragment] subclass.
@@ -23,15 +20,8 @@ private const val ARG_TITLE = "title"
  *
  */
 class MainFragment : Fragment() {
-    private var title: String? = null
     private var listener: OnFragmentInteractionListener? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            title = it.getString(ARG_TITLE)
-        }
-    }
+    private lateinit var tweetsAdapter: TweetsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,9 +33,10 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        okButton.text = title
-        okButton.setOnClickListener {
-            onButtonPressed()
+        tweetsAdapter = TweetsAdapter(listener)
+        list.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = tweetsAdapter
         }
     }
 
@@ -60,6 +51,17 @@ class MainFragment : Fragment() {
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Simulamos un request
+        list.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+        Handler().postDelayed({
+            list.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+        }, 1000)
     }
 
     override fun onDetach() {
@@ -91,11 +93,6 @@ class MainFragment : Fragment() {
          * @return A new instance of fragment MainFragment.
          */
         @JvmStatic
-        fun newInstance(title: String) =
-            MainFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_TITLE, title)
-                }
-            }
+        fun newInstance() = MainFragment()
     }
 }

@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteractionList
             // Solo la primera vez que corre el activity
             // Las demás el propio manager restaura todo como estaba
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, MainFragment.newInstance(getString(R.string.whatAreYouThinking)))
+                .replace(R.id.fragmentContainer, MainFragment.newInstance())
                 .commit()
         }
     }
