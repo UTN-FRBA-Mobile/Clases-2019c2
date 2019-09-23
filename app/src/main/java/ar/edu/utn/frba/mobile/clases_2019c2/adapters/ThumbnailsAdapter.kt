@@ -16,9 +16,10 @@ import kotlinx.android.synthetic.main.thumbnail_list_item.view.*
 class ThumbnailsAdapter(
     private val mContext: Context,
     private val thumbnailItemList: List<ThumbnailItem>,
+    initialSelectedIndex: Int,
     private val listener: ThumbnailsAdapterListener
 ) : RecyclerView.Adapter<ThumbnailsAdapter.MyViewHolder>() {
-    private var selectedIndex = 0
+    private var selectedIndex = initialSelectedIndex
 
     override fun getItemCount() : Int {
         return thumbnailItemList.size
@@ -54,6 +55,10 @@ class ThumbnailsAdapter(
         } else {
             holder.filterName.setTextColor(ContextCompat.getColor(mContext, R.color.filter_label_normal))
         }
+    }
+
+    fun setSelectedFilter(filterName: String) {
+        selectedIndex = thumbnailItemList.indexOfFirst { x -> x.filterName.equals(filterName) }
     }
 
     interface ThumbnailsAdapterListener {
