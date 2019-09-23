@@ -9,8 +9,8 @@
             app:showAsAction="always" />
 
     <item
-            android:id="@+id/action_save"
+            android:id="@+id/action_next"
             android:orderInCategory="101"
-            android:title="GUARDAR"
+            android:title="AVANZAR"
             app:showAsAction="always" />
 </menu>
