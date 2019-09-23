@@ -9,14 +9,12 @@ import android.provider.MediaStore
 import android.view.*
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionManager
 import ar.edu.utn.frba.mobile.clases_2019c2.R
 import ar.edu.utn.frba.mobile.clases_2019c2.adapters.ImagesAdapter
 import ar.edu.utn.frba.mobile.clases_2019c2.utils.storage.fileSystem.InternalStorage
 import ar.edu.utn.frba.mobile.clases_2019c2.utils.storage.preferences.MyPreferences
-import ar.edu.utn.frba.mobile.clases_2019c2.viewmodels.MainActivityViewModel
 import kotlinx.android.synthetic.main.fragment_images.*
 
 class ImagesFragment : Fragment() {
@@ -144,15 +142,11 @@ class ImagesFragment : Fragment() {
     }
 
     private fun launchImageEdition(imageUri: Uri) {
-        var viewModel = ViewModelProvider(activity!!).get(MainActivityViewModel::class.java)
-
-        viewModel.init()
-
-        listener!!.editImageFilters(imageUri)
+        listener!!.showFragment(EditImageFragment.newInstance(imageUri))
     }
 
     interface ImagesFragmentInteractionListener {
-        fun editImageFilters(imageUri: Uri)
+        fun showFragment(fragment: Fragment)
     }
 
     companion object {
