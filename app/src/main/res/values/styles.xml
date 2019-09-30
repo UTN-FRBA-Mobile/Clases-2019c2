@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ActionBarThemeOverlay" parent="">
+        <item name="colorPrimary">#add8e6</item>
+        <item name="colorPrimaryDark">#add8e6</item>
+        <item name="colorAccent">#add8e6</item>
+    </style>
+
 </resources>
